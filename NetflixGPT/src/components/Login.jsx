@@ -1,6 +1,6 @@
 import { useState } from "react";
 import {checkValidateData} from "../utils/Validate";
-
+import { getAuth, createUserWithEmailAndPassword ,signInWithEmailAndPassword } from "firebase/auth";
 import Header from "./Header";
 import { useRef } from "react";
 const Login = () => {
@@ -17,11 +17,48 @@ const Login = () => {
   //TO CREATE A VALIDATION WHETHER THE EMAIL AND THE PASSWORD IS VALID OR NOT
   const email = useRef(null);
   const password = useRef(null);
-  const name = useRef(null);
+ 
 
      const handleButtonClick = () => {
-      const message=  checkValidateData(email.current.value,  password.current.value, name.current.name);
+      const message=  checkValidateData(email.current.value,  password.current.value);
         setErrorMessage(message)
+        if(message)return;
+        //sign in sign up logic
+        if(!isSignInForm){   //signup form logic
+          const auth = getAuth();
+           createUserWithEmailAndPassword(auth, email.current.value,  password.current.value)
+           .then((userCredential) => {
+    // Signed up 
+         const user = userCredential.user;
+    // ...
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    // ..
+  });
+
+        }
+        //sign in form logic  
+        else{
+          const auth = getAuth();
+signInWithEmailAndPassword(auth,  email.current.value,  password.current.value)
+  .then((userCredential) => {
+    // Signed in 
+    const user = userCredential.user;
+    // ...
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+  });
+
+
+
+        }
+
+
+
   };
 
   const toggleSignInForm = () => {
@@ -44,7 +81,6 @@ const Login = () => {
        {!isSignInForm &&(<input
          type="text"
         placeholder = "Name"
-        ref={name}
          className= "p-4  my-4 w-full  bg-slate-700 "  /> 
 )}
      
