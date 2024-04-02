@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {checkValidateData} from "../utils/Validate";
 import {auth} from "../utils/firebase"
-import { getAuth, createUserWithEmailAndPassword ,signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword ,signInWithEmailAndPassword ,updateProfile} from "firebase/auth";
 import Header from "./Header";
 import { useRef } from "react";
 const Login = () => {
@@ -13,6 +14,8 @@ const Login = () => {
   // TO CREATE  STATE FOR THE ERROR MESSAGE
   const[errorMessage , setErrorMessage ] = useState(null)
 
+//navigate
+const navigate = useNavigate();
 
   //use ref is used to reference the tags
   //TO CREATE A VALIDATION WHETHER THE EMAIL AND THE PASSWORD IS VALID OR NOT
@@ -28,10 +31,21 @@ const Login = () => {
         if(!isSignInForm){   //signup form logic
            createUserWithEmailAndPassword(auth, email.current.value,  password.current.value)
            .then((userCredential) => {
+            updateProfile(user, {
+              displayName: "username" , 
+              photoURL: "https://example.com/jane-q-user/profile.jpg"
+            }).then(() => {
+              // Profile updated!
+              // ...
+            }).catch((error) => {
+              // An error occurred
+              // ...
+            });
     // Signed up 
          const user = userCredential.user;
          console.log(user)
     // ...
+    navigate("/browse")
   })
   .catch((error) => {
     const errorCode = error.code;
@@ -49,6 +63,7 @@ const Login = () => {
     // Signed in 
           const user = userCredential.user;
           console.log(user)
+          navigate("/browse")
     // ...
   })
   .catch((error) => {
@@ -59,9 +74,6 @@ const Login = () => {
 
 
         }
-
-
-
   };
 
   const toggleSignInForm = () => {
