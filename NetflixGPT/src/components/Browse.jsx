@@ -1,6 +1,11 @@
+import Header from "./Header";
+
 const Browse = () => {
     return (
-        <div> Browse page is loading </div>
+        <div> 
+            <h1> this is the browser page</h1>
+            <Header/>
+        </div>
     )
 }
 export default Browse;  
